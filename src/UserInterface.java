@@ -12,19 +12,17 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class UserInterface extends Application {
-	public static Label status = new Label();
-	public static Label scores = new Label();
-	public static Button resetGame = new Button("Reset Game");
-	public GridPane grid = new GridPane(); //Used to determine positions of buttons etc.
+	static Label status = new Label();
+	static Label scores = new Label();
+	final static Button resetGame = new Button("Reset Game");
 
-	public static void main (String args[]) {
+	public static void main (String[] args) {
 		launch(args);
 	}
 	
 	@Override
-	public void start(Stage primaryStage) throws Exception {
-		Stage window = primaryStage;
-		window.setTitle("Tic-Tac-Toe");
+	public void start(Stage primaryStage) {
+		primaryStage.setTitle("Tic-Tac-Toe");
 		
 		BorderPane layout = new BorderPane(); //Main layout used to determine position of GridPane and other components
 		GridPane grid = new GridPane(); //Used to determine positions of buttons etc.
@@ -33,26 +31,21 @@ public class UserInterface extends Application {
 		board.initialiseBoard(grid);
 		
 		Image logo = new Image(getClass().getResourceAsStream("res/Logo.png"));
-		ImageView logoImage = new ImageView();
-		logoImage.setImage(logo);
+		ImageView logoImage = new ImageView(logo);
 		
 		scores.setText("You 0-0 Computer");
-		VBox logoScoreBox = new VBox();
-		logoScoreBox.getChildren().addAll(logoImage, scores);
+		VBox logoScoreBox = new VBox(logoImage, scores);
 		logoScoreBox.setAlignment(Pos.CENTER);
 		logoScoreBox.setSpacing(10);
 		
-		HBox logoImageBox = new HBox(); //Used to align the logo at the top of the screen
-		logoImageBox.getChildren().add(logoScoreBox);
+		HBox logoImageBox = new HBox(logoScoreBox); //Used to align the logo at the top of the screen
 		logoImageBox.setAlignment(Pos.CENTER);
 		
-		VBox buttonStatusBox = new VBox(); //Aligns the reset button and status label
-		buttonStatusBox.getChildren().addAll(status, resetGame);
+		VBox buttonStatusBox = new VBox(status, resetGame); //Aligns the reset button and status label
 		buttonStatusBox.setAlignment(Pos.CENTER);
 		buttonStatusBox.setSpacing(10);
 		
-		HBox bottomBox = new HBox(); //Aligns the above box at the bottom of the screen
-		bottomBox.getChildren().add(buttonStatusBox);
+		HBox bottomBox = new HBox(buttonStatusBox); //Aligns the above box at the bottom of the screen
 		bottomBox.setAlignment(Pos.CENTER);
 
 		layout.setTop(logoImageBox);
@@ -61,7 +54,7 @@ public class UserInterface extends Application {
 		
 		Scene mainScene = new Scene(layout, 800, 800); //Add the BorderPane layout to the window
 		mainScene.getStylesheets().add(getClass().getResource("res/Theme.css").toExternalForm()); //Adds the CSS stylesheet to the scene
-		window.setScene(mainScene); //Set the window scene to mainScene which contains the layout
-		window.show();
+		primaryStage.setScene(mainScene); //Set the window scene to mainScene which contains the layout
+		primaryStage.show();
 	}
 }

@@ -6,24 +6,24 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
-public class Board extends UserInterface implements EventHandler<ActionEvent> {
-	
+public class Board implements EventHandler<ActionEvent> {
+
 	private static Button[][] buttons = new Button[3][3];
 	private static boolean yourTurn, youAreX;
-	private static enum playerState {
+	private enum playerState {
 		X,
-		O;
+		O
 	}
 	private static playerState player;
-	private static enum gameState {
+	private enum gameState {
 		WIN,
 		LOSE,
 		DRAW
 	}
 	private static gameState result;
 	private static int yourScore, computerScore;
-	
-	public void initialiseBoard(GridPane grid) {
+
+	void initialiseBoard(GridPane grid) {
 		for (int x = 0; x < 3; x++) {
 			for (int y = 0; y < 3; y++) {
 				buttons[x][y] = new Button("");
@@ -33,28 +33,24 @@ public class Board extends UserInterface implements EventHandler<ActionEvent> {
 				grid.setAlignment(Pos.CENTER);
 			}
 		}
-		resetGame.setOnAction(this);
+		UserInterface.resetGame.setOnAction(this);
 		determineTurn();
 	}
-	
+
 	private int randomNumber() {
-		Random rand = new Random();
-		int randomNumber = rand.nextInt(2) + 1; //Starts from 0, so add 1 for it to count to only 1 & 2
-		return randomNumber;
+		return new Random().nextInt(2) + 1;
 	}
-	
-	public void determineTurn() {
-		randomNumber();
-		if (randomNumber() == 1) { //Setting the player to "X" or "O"
-			youAreX = true;
-			yourTurn = true;
+
+	private void determineTurn() {
+		int rand = randomNumber();
+		youAreX = rand == 1;
+		yourTurn = rand == 1;
+		if (rand == 1) { //Setting the player to "X" or "O"
 			player = playerState.X;
 			UserInterface.status.setText("Your turn - You are " + player);
 		}
 		else
 		{
-			youAreX = false;
-			yourTurn = false;
 			player = playerState.O;
 			UserInterface.status.setText("Computer's turn - You are " + player);
 			nextRound();
@@ -67,16 +63,11 @@ public class Board extends UserInterface implements EventHandler<ActionEvent> {
 			for (int y = 0; y < 3; y++) {
 				if (event.getSource() == buttons[x][y]) {
 					if (yourTurn) {
-						if (youAreX) {
-							buttons[x][y].setText("X");
-						}
-						else {
-							buttons[x][y].setText("O");
-						}
+						buttons[x][y].setText(player.toString());
 					}
-					
+
 					buttons[x][y].setDisable(true); //Disables the button so it cannot be clicked again
-					
+
 					winCheck();
 					if (winCheck()) { //Checks if you have won the game
 						result = gameState.WIN;
@@ -96,12 +87,12 @@ public class Board extends UserInterface implements EventHandler<ActionEvent> {
 				}
 			}
 		}
-		
-		if (event.getSource() == resetGame) {
-			resetGame(grid, status);
+
+		if (event.getSource() == UserInterface.resetGame) {
+			resetGame(UserInterface.status);
 		}
 	}
-	
+
 	private boolean winCheck() {
 		if (buttons[0][0].getText() != "" && buttons[0][0].getText() == buttons[0][1].getText() && buttons[0][1].getText() == buttons[0][2].getText()) { //Top horizontal
 			highlightButtons(buttons[0][0], buttons[0][1], buttons[0][2]);
@@ -139,14 +130,14 @@ public class Board extends UserInterface implements EventHandler<ActionEvent> {
 			return false;
 		}
 	}
-	
+
 	private void highlightButtons(Button button, Button button2, Button button3) {
 		button.getStyleClass().add("highlight-button");
 		button2.getStyleClass().add("highlight-button");
 		button3.getStyleClass().add("highlight-button");
 	}
 
-	public void resetGame(GridPane grid, Label status) {
+	private void resetGame(Label status) {
 		for (int x = 0; x < 3; x++) {
 			for (int y = 0; y < 3; y++) {
 				buttons[x][y].setDisable(false);
@@ -155,18 +146,15 @@ public class Board extends UserInterface implements EventHandler<ActionEvent> {
 				buttons[x][y].getStyleClass().add("button");
 			}
 		}
-		
-		if (yourTurn && youAreX) {
-			status.setText("Your turn - You are " + player);
-		}
-		else if (yourTurn && !youAreX) {
+
+		if (yourTurn) {
 			status.setText("Your turn - You are " + player);
 		}
 		else {
 			nextRound(); //If it's not your turn, let the Computer go first
 		}
 	}
-	
+
 	private boolean drawCheck() {
 		int disabledButtons = 0; //Used to count how many buttons have been used already
 		for (int x = 0; x < 3; x++) {
@@ -176,18 +164,14 @@ public class Board extends UserInterface implements EventHandler<ActionEvent> {
 				}
 			}
 		}
-		if (disabledButtons == 9) { //There are 9 available squares, so a draw has taken place if they have all been used
-			return true;
-		}
-		else {
-			return false;
-		}
+		//There are 9 available squares, so a draw has taken place if they have all been used
+		return disabledButtons == 9;
 	}
-	
+
 	private void nextRound() {
 		UserInterface.status.setText("Computer's turn");
 		boolean completedMove = false;
-		
+
 		//Computer will aim to make a move in the center square, if available
 		if (buttons[1][1].getText() == "") {
 			if (youAreX) {
@@ -196,12 +180,12 @@ public class Board extends UserInterface implements EventHandler<ActionEvent> {
 				completedMove = true;
 			}
 			else {
-				buttons[1][1].setText("X");;
+				buttons[1][1].setText("X");
 				buttons[1][1].setDisable(true);
 				completedMove = true;
 			}
 		}
-		
+
 		//If not, go through each square and place an icon in the first available square
 		for (int x = 0; x < 3 && !completedMove; x++) {
 			for (int y = 0; y < 3; y++) {
@@ -210,7 +194,7 @@ public class Board extends UserInterface implements EventHandler<ActionEvent> {
 						buttons[x][y].setText("O");
 						buttons[x][y].setDisable(true); //Disables the button so it cannot be clicked again
 						completedMove = true;
-						break;					
+						break;
 					}
 					else {
 						buttons[x][y].setText("X");
@@ -221,8 +205,7 @@ public class Board extends UserInterface implements EventHandler<ActionEvent> {
 				}
 			}
 		}
-		
-		winCheck();
+
 		if (winCheck()) { //Checks if the Computer has won the game
 			result = gameState.LOSE;
 			endGame();
@@ -260,6 +243,6 @@ public class Board extends UserInterface implements EventHandler<ActionEvent> {
 			UserInterface.status.setText("It's a draw!");
 		}
 		
-		scores.setText("You " + yourScore + "-" + computerScore + " Computer");
+		UserInterface.scores.setText("You " + yourScore + "-" + computerScore + " Computer");
 	}
 }

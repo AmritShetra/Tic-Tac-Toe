@@ -12,9 +12,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class UserInterface extends Application {
-	static Label status = new Label();
-	static Label scores = new Label();
-	final static Button resetGame = new Button("Reset Game");
+
+	private static Label status = new Label();
+	private static Label scores = new Label();
+	static Button resetGame = new Button();
 
 	public static void main (String[] args) {
 		launch(args);
@@ -26,7 +27,7 @@ public class UserInterface extends Application {
 		
 		BorderPane layout = new BorderPane(); //Main layout used to determine position of GridPane and other components
 		GridPane grid = new GridPane(); //Used to determine positions of buttons etc.
-		
+
 		Board board = new Board();
 		board.initialiseBoard(grid);
 		
@@ -40,7 +41,12 @@ public class UserInterface extends Application {
 		
 		HBox logoImageBox = new HBox(logoScoreBox); //Used to align the logo at the top of the screen
 		logoImageBox.setAlignment(Pos.CENTER);
-		
+
+		Image reset = new Image(getClass().getResourceAsStream("res/Reset-Game.png"));
+		ImageView resetImage = new ImageView(reset);
+		resetImage.setImage(reset);
+		resetGame.setGraphic(resetImage);
+
 		VBox buttonStatusBox = new VBox(status, resetGame); //Aligns the reset button and status label
 		buttonStatusBox.setAlignment(Pos.CENTER);
 		buttonStatusBox.setSpacing(10);
@@ -56,5 +62,25 @@ public class UserInterface extends Application {
 		mainScene.getStylesheets().add(getClass().getResource("res/Theme.css").toExternalForm()); //Adds the CSS stylesheet to the scene
 		primaryStage.setScene(mainScene); //Set the window scene to mainScene which contains the layout
 		primaryStage.show();
+	}
+
+	public static Label getStatus() {
+		return status;
+	}
+
+	/**
+	 * Sets the text for the "status" label, e.g. whose turn it is.
+	 * @param newText	New label string.
+	 */
+	public static void setStatus(String newText) {
+		status.setText(newText);
+	}
+
+	/**
+	 * Sets the text for the "scores" label, e.g. "You 0-0 Computer".
+	 * @param newScore	New score string.
+	 */
+	public static void setScores(String newScore) {
+		scores.setText(newScore);
 	}
 }

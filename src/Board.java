@@ -47,12 +47,12 @@ public class Board implements EventHandler<ActionEvent> {
 		yourTurn = rand == 1;
 		if (rand == 1) { //Setting the player to "X" or "O"
 			player = playerState.X;
-			UserInterface.status.setText("Your turn - You are " + player);
+			UserInterface.setStatus("Your turn - You are " + player);
 		}
 		else
 		{
 			player = playerState.O;
-			UserInterface.status.setText("Computer's turn - You are " + player);
+			UserInterface.setStatus("Computer's turn - You are " + player);
 			nextRound();
 		}
 	}
@@ -89,46 +89,84 @@ public class Board implements EventHandler<ActionEvent> {
 		}
 
 		if (event.getSource() == UserInterface.resetGame) {
-			resetGame(UserInterface.status);
+			resetGame(UserInterface.getStatus());
 		}
 	}
 
 	private boolean winCheck() {
-		if (buttons[0][0].getText() != "" && buttons[0][0].getText() == buttons[0][1].getText() && buttons[0][1].getText() == buttons[0][2].getText()) { //Top horizontal
+		// Top horizontal
+		if (!buttons[0][0].getText().equals("") &&
+				buttons[0][0].getText().equals(buttons[0][1].getText()) &&
+				buttons[0][1].getText().equals(buttons[0][2].getText())
+		) {
 			highlightButtons(buttons[0][0], buttons[0][1], buttons[0][2]);
 			return true;
 		}
-		else if (buttons[1][0].getText() != "" && buttons[1][0].getText() == buttons[1][1].getText() && buttons[1][1].getText() == buttons[1][2].getText()) { //Middle horizontal
+
+		//Middle horizontal
+		if (!buttons[1][0].getText().equals("")
+				&& buttons[1][0].getText().equals(buttons[1][1].getText())
+				&& buttons[1][1].getText().equals(buttons[1][2].getText())
+		) {
 			highlightButtons(buttons[1][0], buttons[1][1], buttons[1][2]);
 			return true;
 		}
-		else if (buttons[2][0].getText() != "" && buttons[2][0].getText() == buttons[2][1].getText() && buttons[2][1].getText() == buttons[2][2].getText()) { //Bottom horizontal
+
+		//Bottom horizontal
+		if (!buttons[2][0].getText().equals("")
+				&& buttons[2][0].getText().equals(buttons[2][1].getText())
+				&& buttons[2][1].getText().equals(buttons[2][2].getText())
+		) {
 			highlightButtons(buttons[2][0], buttons[2][1], buttons[2][2]);
 			return true;
 		}
-		else if (buttons[0][0].getText() != "" && buttons[0][0].getText() == buttons[1][0].getText() && buttons[1][0].getText() == buttons[2][0].getText()) { //Left vertical
+
+		//Left vertical
+		if (!buttons[0][0].getText().equals("")
+				&& buttons[0][0].getText().equals(buttons[1][0].getText())
+				&& buttons[1][0].getText().equals(buttons[2][0].getText())
+		) {
 			highlightButtons(buttons[0][0], buttons[1][0], buttons[2][0]);
 			return true;
 		}
-		else if (buttons[0][1].getText() != "" && buttons[0][1].getText() == buttons[1][1].getText() && buttons[1][1].getText() == buttons[2][1].getText()) { //Middle vertical
+
+		//Middle vertical
+		if (!buttons[0][1].getText().equals("")
+				&& buttons[0][1].getText().equals(buttons[1][1].getText())
+				&& buttons[1][1].getText().equals(buttons[2][1].getText())
+		) {
 			highlightButtons(buttons[0][1], buttons[1][1], buttons[2][1]);
 			return true;
 		}
-		else if (buttons[0][2].getText() != "" && buttons[0][2].getText() == buttons[1][2].getText() && buttons[1][2].getText() == buttons[2][2].getText()) { //Right vertical
+
+		//Right vertical
+		if (!buttons[0][2].getText().equals("")
+				&& buttons[0][2].getText().equals(buttons[1][2].getText())
+				&& buttons[1][2].getText().equals(buttons[2][2].getText())
+		) {
 			highlightButtons(buttons[0][2], buttons[1][2], buttons[2][2]);
 			return true;
 		}
-		else if (buttons[0][0].getText() != "" && buttons[0][0].getText() == buttons[1][1].getText() && buttons[1][1].getText() == buttons[2][2].getText()) { //Left-to-right diagonal
+
+		//Left-to-right diagonal
+		if (!buttons[0][0].getText().equals("")
+				&& buttons[0][0].getText().equals(buttons[1][1].getText())
+				&& buttons[1][1].getText().equals(buttons[2][2].getText())
+		) {
 			highlightButtons(buttons[0][0], buttons[1][1], buttons[2][2]);
 			return true;
 		}
-		else if (buttons[0][2].getText() != "" && buttons[0][2].getText() == buttons[1][1].getText() && buttons[1][1].getText() == buttons[2][0].getText()) { //Right-to-left diagonal
+
+		//Right-to-left diagonal
+		if (!buttons[0][2].getText().equals("")
+				&& buttons[0][2].getText().equals(buttons[1][1].getText())
+				&& buttons[1][1].getText().equals(buttons[2][0].getText())
+		) {
 			highlightButtons(buttons[0][2], buttons[1][1], buttons[2][0]);
 			return true;
 		}
-		else {
-			return false;
-		}
+
+		return false;
 	}
 
 	private void highlightButtons(Button button, Button button2, Button button3) {
@@ -169,21 +207,19 @@ public class Board implements EventHandler<ActionEvent> {
 	}
 
 	private void nextRound() {
-		UserInterface.status.setText("Computer's turn");
+		UserInterface.setStatus("Computer's turn");
 		boolean completedMove = false;
 
 		//Computer will aim to make a move in the center square, if available
-		if (buttons[1][1].getText() == "") {
+		if (buttons[1][1].getText().equals("")) {
 			if (youAreX) {
 				buttons[1][1].setText("O");
-				buttons[1][1].setDisable(true);
-				completedMove = true;
 			}
 			else {
 				buttons[1][1].setText("X");
-				buttons[1][1].setDisable(true);
-				completedMove = true;
 			}
+			buttons[1][1].setDisable(true);
+			completedMove = true;
 		}
 
 		//If not, go through each square and place an icon in the first available square
@@ -192,16 +228,13 @@ public class Board implements EventHandler<ActionEvent> {
 				if (buttons[x][y].getText().equals("")) {
 					if (youAreX) { //User is "X" so the Computer must be "O"
 						buttons[x][y].setText("O");
-						buttons[x][y].setDisable(true); //Disables the button so it cannot be clicked again
-						completedMove = true;
-						break;
 					}
 					else {
 						buttons[x][y].setText("X");
-						buttons[x][y].setDisable(true);
-						completedMove = true;
-						break;
 					}
+					buttons[x][y].setDisable(true); //Disables the button so it cannot be clicked again
+					completedMove = true;
+					break;
 				}
 			}
 		}
@@ -218,7 +251,7 @@ public class Board implements EventHandler<ActionEvent> {
 			}
 			else {
 				yourTurn = true; //Indicates the next turn is yours
-				UserInterface.status.setText("Your turn - You are " + player);
+				UserInterface.setStatus("Your turn - You are " + player);
 			}
 		}
 	}
@@ -229,20 +262,20 @@ public class Board implements EventHandler<ActionEvent> {
 				buttons[x][y].setDisable(true); //Disable all the remaining buttons as the game is over
 			}
 		}
-		
+
 		//Check to see who has won the game and set the text accordingly
 		if (result == gameState.WIN) {
-			UserInterface.status.setText("You win! Congratulations!");
+			UserInterface.setStatus("You win! Congratulations!");
 			yourScore++;
 		}
 		else if (result == gameState.LOSE) {
-			UserInterface.status.setText("You lose... Better luck next time!");
+			UserInterface.setStatus("You lose... Better luck next time!");
 			computerScore++;
 		}
 		else if (result == gameState.DRAW) {
-			UserInterface.status.setText("It's a draw!");
+			UserInterface.setStatus("It's a draw!");
 		}
-		
-		UserInterface.scores.setText("You " + yourScore + "-" + computerScore + " Computer");
+
+		UserInterface.setScores("You " + yourScore + "-" + computerScore + " Computer");
 	}
 }

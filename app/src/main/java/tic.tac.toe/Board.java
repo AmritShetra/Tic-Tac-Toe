@@ -1,3 +1,5 @@
+package tic.tac.toe;
+
 import java.util.Random;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -33,7 +35,7 @@ public class Board implements EventHandler<ActionEvent> {
 				grid.setAlignment(Pos.CENTER);
 			}
 		}
-		UserInterface.resetGame.setOnAction(this);
+		App.resetGame.setOnAction(this);
 		determineTurn();
 	}
 
@@ -47,12 +49,12 @@ public class Board implements EventHandler<ActionEvent> {
 		yourTurn = rand == 1;
 		if (rand == 1) { //Setting the player to "X" or "O"
 			player = playerState.X;
-			UserInterface.setStatus("Your turn - You are " + player);
+			App.setStatus("Your turn - You are " + player);
 		}
 		else
 		{
 			player = playerState.O;
-			UserInterface.setStatus("Computer's turn - You are " + player);
+			App.setStatus("Computer's turn - You are " + player);
 			nextRound();
 		}
 	}
@@ -88,8 +90,8 @@ public class Board implements EventHandler<ActionEvent> {
 			}
 		}
 
-		if (event.getSource() == UserInterface.resetGame) {
-			resetGame(UserInterface.getStatus());
+		if (event.getSource() == App.resetGame) {
+			resetGame(App.getStatus());
 		}
 	}
 
@@ -207,7 +209,7 @@ public class Board implements EventHandler<ActionEvent> {
 	}
 
 	private void nextRound() {
-		UserInterface.setStatus("Computer's turn");
+		App.setStatus("Computer's turn");
 		boolean completedMove = false;
 
 		//Computer will aim to make a move in the center square, if available
@@ -251,7 +253,7 @@ public class Board implements EventHandler<ActionEvent> {
 			}
 			else {
 				yourTurn = true; //Indicates the next turn is yours
-				UserInterface.setStatus("Your turn - You are " + player);
+				App.setStatus("Your turn - You are " + player);
 			}
 		}
 	}
@@ -265,17 +267,17 @@ public class Board implements EventHandler<ActionEvent> {
 
 		//Check to see who has won the game and set the text accordingly
 		if (result == gameState.WIN) {
-			UserInterface.setStatus("You win! Congratulations!");
+			App.setStatus("You win! Congratulations!");
 			yourScore++;
 		}
 		else if (result == gameState.LOSE) {
-			UserInterface.setStatus("You lose... Better luck next time!");
+			App.setStatus("You lose... Better luck next time!");
 			computerScore++;
 		}
 		else if (result == gameState.DRAW) {
-			UserInterface.setStatus("It's a draw!");
+			App.setStatus("It's a draw!");
 		}
 
-		UserInterface.setScores("You " + yourScore + "-" + computerScore + " Computer");
+		App.setScores("You " + yourScore + "-" + computerScore + " Computer");
 	}
 }

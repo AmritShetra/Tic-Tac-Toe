@@ -1,4 +1,4 @@
-package tic.tac.toe;
+package tictactoe;
 
 import java.util.Random;
 import javafx.event.ActionEvent;

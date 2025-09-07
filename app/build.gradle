@@ -33,7 +33,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'tic.tac.toe.App'
+    mainClass = 'tictactoe.App'
 }
 
 tasks.named('test') {

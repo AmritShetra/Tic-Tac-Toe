@@ -7,8 +7,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class Board implements EventHandler<ActionEvent> {
+
+	private static Button[] buttons2 = new Button[9];
 
 	private static Button[][] buttons = new Button[3][3];
 	private static boolean yourTurn, youAreX;
@@ -26,17 +30,45 @@ public class Board implements EventHandler<ActionEvent> {
 	private static int yourScore, computerScore;
 
 	void initialiseBoard(GridPane grid) {
-		for (int x = 0; x < 3; x++) {
-			for (int y = 0; y < 3; y++) {
-				buttons[x][y] = new Button("");
-				buttons[x][y].setPrefSize(150, 150);
-				buttons[x][y].setOnAction(this);
-				grid.add(buttons[x][y], x, y);
-				grid.setAlignment(Pos.CENTER);
-			}
+
+		for (int x = 0; x < 9; x++) {
+			buttons2[x] = new Button("");
+			buttons2[x].setPrefSize(150, 150);
+			buttons2[x].setOnAction(this);
 		}
+
+		HBox firstRow = new HBox();
+		firstRow.getChildren().addAll(buttons2[0], buttons2[1], buttons2[2]);
+		HBox secondRow = new HBox();
+		secondRow.getChildren().addAll(buttons2[3], buttons2[4], buttons2[5]);
+		HBox thirdRow = new HBox();
+		thirdRow.getChildren().addAll(buttons2[6], buttons2[7], buttons2[8]);
+
+	
+		VBox vbox = new VBox();
+		vbox.getChildren().addAll(firstRow, secondRow, thirdRow);
+
+		grid.add(vbox, 0, 0);
+
 		App.resetGame.setOnAction(this);
 		determineTurn();
+		
+
+		/*
+
+		int buttonNo = 0;
+		for (int x = 0; x< 3; x++) {
+            for (int y = 0; y < 3; y++) {
+				buttons2[buttonNo] = new Button("");
+				buttons2[buttonNo].setPrefSize(150, 150);
+				buttons2[buttonNo].setOnAction(this);
+                grid.add(buttons2[buttonNo], x, y);
+				buttonNo++;
+            }
+        }
+		App.resetGame.setOnAction(this);
+		determineTurn();
+		*/
 	}
 
 	private int randomNumber() {
@@ -61,30 +93,24 @@ public class Board implements EventHandler<ActionEvent> {
 
 	@Override
 	public void handle(ActionEvent event) {
-		for (int x = 0; x < 3; x++) {
-			for (int y = 0; y < 3; y++) {
-				if (event.getSource() == buttons[x][y]) {
-					if (yourTurn) {
-						buttons[x][y].setText(player.toString());
-					}
+		for (int x = 0; x < 9; x++){
+			if (event.getSource() == buttons2[x] && yourTurn) {
+				buttons2[x].setText(player.toString());
+				buttons2[x].setDisable(true);
 
-					buttons[x][y].setDisable(true); //Disables the button so it cannot be clicked again
-
-					winCheck();
-					if (winCheck()) { //Checks if you have won the game
-						result = gameState.WIN;
+				winCheck();
+				if (winCheck()) {
+					result = gameState.WIN;
+					endGame();
+				} 
+				else {
+					if (drawCheck()) {
+						result = gameState.DRAW;
 						endGame();
 					}
 					else {
-						drawCheck(); //You have not won the game but there might be a draw
-						if (drawCheck()) {
-							result = gameState.DRAW;
-							endGame();
-						}
-						else {
-							yourTurn = false; //Indicate the next turn is the computer's
-							nextRound();
-						}
+						yourTurn = false;
+						nextRound();
 					}
 				}
 			}
@@ -96,75 +122,62 @@ public class Board implements EventHandler<ActionEvent> {
 	}
 
 	private boolean winCheck() {
+		// 0 1 2
+		// 3 4 5
+		// 6 7 8
+
+		String[] buttonsToText = new String[buttons2.length];
+		for (int i = 0; i < buttons2.length; i++) {
+			buttonsToText[i] = buttons2[i].getText();
+		}
+		
 		// Top horizontal
-		if (!buttons[0][0].getText().equals("") &&
-				buttons[0][0].getText().equals(buttons[0][1].getText()) &&
-				buttons[0][1].getText().equals(buttons[0][2].getText())
+		if (!buttons2[0].getText().equals("") && 
+			buttonsToText[0].equals(buttonsToText[1]) && buttonsToText[1].equals(buttonsToText[2])
 		) {
-			highlightButtons(buttons[0][0], buttons[0][1], buttons[0][2]);
+			highlightButtons(buttons2[0], buttons2[1], buttons2[2]);
 			return true;
 		}
 
-		//Middle horizontal
-		if (!buttons[1][0].getText().equals("")
-				&& buttons[1][0].getText().equals(buttons[1][1].getText())
-				&& buttons[1][1].getText().equals(buttons[1][2].getText())
-		) {
-			highlightButtons(buttons[1][0], buttons[1][1], buttons[1][2]);
+		// Middle horizontal
+		if (!buttons2[3].getText().equals("") && buttons2[3].getText().equals(buttons2[4].getText()) && buttons2[4].getText().equals(buttons2[5].getText())) {
+			highlightButtons(buttons2[3], buttons2[4], buttons2[5]);
 			return true;
 		}
 
 		//Bottom horizontal
-		if (!buttons[2][0].getText().equals("")
-				&& buttons[2][0].getText().equals(buttons[2][1].getText())
-				&& buttons[2][1].getText().equals(buttons[2][2].getText())
-		) {
-			highlightButtons(buttons[2][0], buttons[2][1], buttons[2][2]);
+		if (!buttons2[6].getText().equals("") && buttons2[6].getText().equals(buttons2[7].getText()) && buttons2[7].getText().equals(buttons2[8].getText())) {
+			highlightButtons(buttons2[6], buttons2[7], buttons2[8]);
 			return true;
 		}
 
 		//Left vertical
-		if (!buttons[0][0].getText().equals("")
-				&& buttons[0][0].getText().equals(buttons[1][0].getText())
-				&& buttons[1][0].getText().equals(buttons[2][0].getText())
-		) {
-			highlightButtons(buttons[0][0], buttons[1][0], buttons[2][0]);
+		if (!buttons2[3].getText().equals("") && buttons2[0].getText().equals(buttons2[3].getText()) && buttons2[3].getText().equals(buttons2[6].getText())) {
+			highlightButtons(buttons2[0], buttons2[3], buttons2[6]);
 			return true;
 		}
 
 		//Middle vertical
-		if (!buttons[0][1].getText().equals("")
-				&& buttons[0][1].getText().equals(buttons[1][1].getText())
-				&& buttons[1][1].getText().equals(buttons[2][1].getText())
-		) {
-			highlightButtons(buttons[0][1], buttons[1][1], buttons[2][1]);
+		if (!buttons2[1].getText().equals("") && buttons2[1].getText().equals(buttons2[4].getText()) && buttons2[4].getText().equals(buttons2[7].getText())) {
+			highlightButtons(buttons2[1], buttons2[4], buttons2[7]);
 			return true;
 		}
 
 		//Right vertical
-		if (!buttons[0][2].getText().equals("")
-				&& buttons[0][2].getText().equals(buttons[1][2].getText())
-				&& buttons[1][2].getText().equals(buttons[2][2].getText())
-		) {
-			highlightButtons(buttons[0][2], buttons[1][2], buttons[2][2]);
+		if (!buttons2[2].getText().equals("") && buttons2[2].getText().equals(buttons2[5].getText()) && buttons2[5].getText().equals(buttons2[8].getText())) {
+			highlightButtons(buttons2[2], buttons2[5], buttons2[8]);
 			return true;
 		}
 
 		//Left-to-right diagonal
-		if (!buttons[0][0].getText().equals("")
-				&& buttons[0][0].getText().equals(buttons[1][1].getText())
-				&& buttons[1][1].getText().equals(buttons[2][2].getText())
-		) {
-			highlightButtons(buttons[0][0], buttons[1][1], buttons[2][2]);
+		if (!buttons2[0].getText().equals("") && buttons2[0].getText().equals(buttons2[4].getText()) && buttons2[4].getText().equals(buttons2[8].getText())) {
+			highlightButtons(buttons2[0], buttons2[4], buttons2[8]);
 			return true;
 		}
 
 		//Right-to-left diagonal
-		if (!buttons[0][2].getText().equals("")
-				&& buttons[0][2].getText().equals(buttons[1][1].getText())
-				&& buttons[1][1].getText().equals(buttons[2][0].getText())
-		) {
-			highlightButtons(buttons[0][2], buttons[1][1], buttons[2][0]);
+		if (!buttons2[2].getText().equals("") && buttons2[2].getText().equals(buttons2[4].getText()) && buttons2[4].getText().equals(buttons2[6].getText())) {
+			highlightButtons(buttons2[2], buttons2[4], buttons2[6]);
 			return true;
 		}
 
@@ -178,13 +191,11 @@ public class Board implements EventHandler<ActionEvent> {
 	}
 
 	private void resetGame(Label status) {
-		for (int x = 0; x < 3; x++) {
-			for (int y = 0; y < 3; y++) {
-				buttons[x][y].setDisable(false);
-				buttons[x][y].setText("");
-				buttons[x][y].getStyleClass().clear();
-				buttons[x][y].getStyleClass().add("button");
-			}
+		for (int x = 0; x < 9; x++) {
+				buttons2[x].setDisable(false);
+				buttons2[x].setText("");
+				buttons2[x].getStyleClass().clear();
+				buttons2[x].getStyleClass().add("button");
 		}
 
 		if (yourTurn) {
@@ -196,15 +207,13 @@ public class Board implements EventHandler<ActionEvent> {
 	}
 
 	private boolean drawCheck() {
-		int disabledButtons = 0; //Used to count how many buttons have been used already
-		for (int x = 0; x < 3; x++) {
-			for (int y = 0; y < 3; y++) {
-				if (buttons[x][y].isDisabled()) {
-					disabledButtons++;
-				}
+		int disabledButtons = 0;
+		for (int x = 0; x < 9; x++) {
+			if (buttons2[x].isDisabled()) {
+				disabledButtons++;
 			}
 		}
-		//There are 9 available squares, so a draw has taken place if they have all been used
+
 		return disabledButtons == 9;
 	}
 
@@ -212,35 +221,38 @@ public class Board implements EventHandler<ActionEvent> {
 		App.setStatus("Computer's turn");
 		boolean completedMove = false;
 
-		//Computer will aim to make a move in the center square, if available
-		if (buttons[1][1].getText().equals("")) {
+		
+		if (buttons2[4].getText().equals("")) {
 			if (youAreX) {
-				buttons[1][1].setText("O");
+				buttons2[4].setText("O");
 			}
 			else {
-				buttons[1][1].setText("X");
+				buttons2[4].setText("X");
 			}
-			buttons[1][1].setDisable(true);
+			buttons2[4].setDisable(true);
 			completedMove = true;
 		}
 
-		//If not, go through each square and place an icon in the first available square
-		for (int x = 0; x < 3 && !completedMove; x++) {
-			for (int y = 0; y < 3; y++) {
-				if (buttons[x][y].getText().equals("")) {
-					if (youAreX) { //User is "X" so the Computer must be "O"
-						buttons[x][y].setText("O");
-					}
-					else {
-						buttons[x][y].setText("X");
-					}
-					buttons[x][y].setDisable(true); //Disables the button so it cannot be clicked again
-					completedMove = true;
-					break;
+		for (int x = 0; x < 9; x++) {
+			if (completedMove) {
+				break;
+			}
+
+			if (buttons2[x].getText().equals("")) {
+				if (youAreX) {
+					buttons2[x].setText("O");
 				}
+				else {
+					buttons2[x].setText("X");
+				}
+				buttons2[x].setDisable(true);
+				completedMove = true;
+				break;
 			}
 		}
+		
 
+		winCheck();
 		if (winCheck()) { //Checks if the Computer has won the game
 			result = gameState.LOSE;
 			endGame();
@@ -259,10 +271,8 @@ public class Board implements EventHandler<ActionEvent> {
 	}
 
 	private void endGame() {
-		for (int x = 0; x < 3; x++) {
-			for (int y = 0; y < 3; y++) {
-				buttons[x][y].setDisable(true); //Disable all the remaining buttons as the game is over
-			}
+		for (int x = 0; x < 9; x++) {
+				buttons2[x].setDisable(true);
 		}
 
 		//Check to see who has won the game and set the text accordingly

@@ -7,14 +7,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+
 
 public class Board implements EventHandler<ActionEvent> {
 
-	private static Button[] buttons2 = new Button[9];
+	private static Button[] buttons = new Button[9];
 
-	private static Button[][] buttons = new Button[3][3];
 	private static boolean yourTurn, youAreX;
 	private enum playerState {
 		X,
@@ -30,45 +28,20 @@ public class Board implements EventHandler<ActionEvent> {
 	private static int yourScore, computerScore;
 
 	void initialiseBoard(GridPane grid) {
-
-		for (int x = 0; x < 9; x++) {
-			buttons2[x] = new Button("");
-			buttons2[x].setPrefSize(150, 150);
-			buttons2[x].setOnAction(this);
-		}
-
-		HBox firstRow = new HBox();
-		firstRow.getChildren().addAll(buttons2[0], buttons2[1], buttons2[2]);
-		HBox secondRow = new HBox();
-		secondRow.getChildren().addAll(buttons2[3], buttons2[4], buttons2[5]);
-		HBox thirdRow = new HBox();
-		thirdRow.getChildren().addAll(buttons2[6], buttons2[7], buttons2[8]);
-
-	
-		VBox vbox = new VBox();
-		vbox.getChildren().addAll(firstRow, secondRow, thirdRow);
-
-		grid.add(vbox, 0, 0);
-
-		App.resetGame.setOnAction(this);
-		determineTurn();
-		
-
-		/*
-
 		int buttonNo = 0;
 		for (int x = 0; x< 3; x++) {
             for (int y = 0; y < 3; y++) {
-				buttons2[buttonNo] = new Button("");
-				buttons2[buttonNo].setPrefSize(150, 150);
-				buttons2[buttonNo].setOnAction(this);
-                grid.add(buttons2[buttonNo], x, y);
+				buttons[buttonNo] = new Button("");
+				buttons[buttonNo].setPrefSize(150, 150);
+				buttons[buttonNo].setOnAction(this);
+                grid.add(buttons[buttonNo], x, y);
 				buttonNo++;
             }
         }
+		grid.setAlignment(Pos.CENTER);
 		App.resetGame.setOnAction(this);
 		determineTurn();
-		*/
+		
 	}
 
 	private int randomNumber() {
@@ -94,9 +67,9 @@ public class Board implements EventHandler<ActionEvent> {
 	@Override
 	public void handle(ActionEvent event) {
 		for (int x = 0; x < 9; x++){
-			if (event.getSource() == buttons2[x] && yourTurn) {
-				buttons2[x].setText(player.toString());
-				buttons2[x].setDisable(true);
+			if (event.getSource() == buttons[x] && yourTurn) {
+				buttons[x].setText(player.toString());
+				buttons[x].setDisable(true);
 
 				winCheck();
 				if (winCheck()) {
@@ -126,58 +99,71 @@ public class Board implements EventHandler<ActionEvent> {
 		// 3 4 5
 		// 6 7 8
 
-		String[] buttonsToText = new String[buttons2.length];
-		for (int i = 0; i < buttons2.length; i++) {
-			buttonsToText[i] = buttons2[i].getText();
+		String[] buttonsText = new String[buttons.length];
+		for (int i = 0; i < buttons.length; i++) {
+			buttonsText[i] = buttons[i].getText();
 		}
 		
 		// Top horizontal
-		if (!buttons2[0].getText().equals("") && 
-			buttonsToText[0].equals(buttonsToText[1]) && buttonsToText[1].equals(buttonsToText[2])
-		) {
-			highlightButtons(buttons2[0], buttons2[1], buttons2[2]);
+		if (!buttonsText[0].equals("") && 
+			buttonsText[0].equals(buttonsText[1]) && buttonsText[1].equals(buttonsText[2])) {
+			highlightButtons(buttons[0], buttons[1], buttons[2]);
 			return true;
 		}
 
 		// Middle horizontal
-		if (!buttons2[3].getText().equals("") && buttons2[3].getText().equals(buttons2[4].getText()) && buttons2[4].getText().equals(buttons2[5].getText())) {
-			highlightButtons(buttons2[3], buttons2[4], buttons2[5]);
+		if (!buttonsText[3].equals("") && 
+			buttonsText[3].equals(buttonsText[4]) && buttonsText[4].equals(buttonsText[5])
+		) {
+			highlightButtons(buttons[3], buttons[4], buttons[5]);
 			return true;
 		}
 
 		//Bottom horizontal
-		if (!buttons2[6].getText().equals("") && buttons2[6].getText().equals(buttons2[7].getText()) && buttons2[7].getText().equals(buttons2[8].getText())) {
-			highlightButtons(buttons2[6], buttons2[7], buttons2[8]);
+		if (!buttonsText[6].equals("") && 
+			buttonsText[6].equals(buttonsText[7]) && buttonsText[7].equals(buttonsText[8])
+		) {
+			highlightButtons(buttons[6], buttons[7], buttons[8]);
 			return true;
 		}
 
 		//Left vertical
-		if (!buttons2[3].getText().equals("") && buttons2[0].getText().equals(buttons2[3].getText()) && buttons2[3].getText().equals(buttons2[6].getText())) {
-			highlightButtons(buttons2[0], buttons2[3], buttons2[6]);
+		if (!buttonsText[3].equals("") && 
+			buttonsText[0].equals(buttonsText[3]) && buttonsText[3].equals(buttonsText[6])
+		) {
+			highlightButtons(buttons[0], buttons[3], buttons[6]);
 			return true;
 		}
 
 		//Middle vertical
-		if (!buttons2[1].getText().equals("") && buttons2[1].getText().equals(buttons2[4].getText()) && buttons2[4].getText().equals(buttons2[7].getText())) {
-			highlightButtons(buttons2[1], buttons2[4], buttons2[7]);
+		if (!buttonsText[1].equals("") && 
+			buttonsText[1].equals(buttonsText[4]) && buttonsText[4].equals(buttonsText[7])
+		) {
+			highlightButtons(buttons[1], buttons[4], buttons[7]);
 			return true;
 		}
 
 		//Right vertical
-		if (!buttons2[2].getText().equals("") && buttons2[2].getText().equals(buttons2[5].getText()) && buttons2[5].getText().equals(buttons2[8].getText())) {
-			highlightButtons(buttons2[2], buttons2[5], buttons2[8]);
+		if (!buttonsText[2].equals("") && 
+			buttonsText[2].equals(buttonsText[5]) && buttonsText[5].equals(buttonsText[8])
+		) {
+			highlightButtons(buttons[2], buttons[5], buttons[8]);
 			return true;
 		}
 
 		//Left-to-right diagonal
-		if (!buttons2[0].getText().equals("") && buttons2[0].getText().equals(buttons2[4].getText()) && buttons2[4].getText().equals(buttons2[8].getText())) {
-			highlightButtons(buttons2[0], buttons2[4], buttons2[8]);
+		if (!buttonsText[0].equals("") && 
+			buttonsText[0].equals(buttonsText[4]) && buttonsText[4].equals(buttonsText[8])
+		) {
+			highlightButtons(buttons[0], buttons[4], buttons[8]);
 			return true;
 		}
 
 		//Right-to-left diagonal
-		if (!buttons2[2].getText().equals("") && buttons2[2].getText().equals(buttons2[4].getText()) && buttons2[4].getText().equals(buttons2[6].getText())) {
-			highlightButtons(buttons2[2], buttons2[4], buttons2[6]);
+		if (!buttonsText[2].equals("") && 
+			buttonsText[2].equals(buttonsText[4]) && buttonsText[4].equals(buttonsText[6])
+		) {
+			highlightButtons(buttons[2], buttons[4], buttons[6]);
 			return true;
 		}
 
@@ -192,10 +178,10 @@ public class Board implements EventHandler<ActionEvent> {
 
 	private void resetGame(Label status) {
 		for (int x = 0; x < 9; x++) {
-				buttons2[x].setDisable(false);
-				buttons2[x].setText("");
-				buttons2[x].getStyleClass().clear();
-				buttons2[x].getStyleClass().add("button");
+				buttons[x].setDisable(false);
+				buttons[x].setText("");
+				buttons[x].getStyleClass().clear();
+				buttons[x].getStyleClass().add("button");
 		}
 
 		if (yourTurn) {
@@ -209,7 +195,7 @@ public class Board implements EventHandler<ActionEvent> {
 	private boolean drawCheck() {
 		int disabledButtons = 0;
 		for (int x = 0; x < 9; x++) {
-			if (buttons2[x].isDisabled()) {
+			if (buttons[x].isDisabled()) {
 				disabledButtons++;
 			}
 		}
@@ -222,14 +208,14 @@ public class Board implements EventHandler<ActionEvent> {
 		boolean completedMove = false;
 
 		
-		if (buttons2[4].getText().equals("")) {
+		if (buttons[4].getText().equals("")) {
 			if (youAreX) {
-				buttons2[4].setText("O");
+				buttons[4].setText("O");
 			}
 			else {
-				buttons2[4].setText("X");
+				buttons[4].setText("X");
 			}
-			buttons2[4].setDisable(true);
+			buttons[4].setDisable(true);
 			completedMove = true;
 		}
 
@@ -238,14 +224,14 @@ public class Board implements EventHandler<ActionEvent> {
 				break;
 			}
 
-			if (buttons2[x].getText().equals("")) {
+			if (buttons[x].getText().equals("")) {
 				if (youAreX) {
-					buttons2[x].setText("O");
+					buttons[x].setText("O");
 				}
 				else {
-					buttons2[x].setText("X");
+					buttons[x].setText("X");
 				}
-				buttons2[x].setDisable(true);
+				buttons[x].setDisable(true);
 				completedMove = true;
 				break;
 			}
@@ -272,7 +258,7 @@ public class Board implements EventHandler<ActionEvent> {
 
 	private void endGame() {
 		for (int x = 0; x < 9; x++) {
-				buttons2[x].setDisable(true);
+				buttons[x].setDisable(true);
 		}
 
 		//Check to see who has won the game and set the text accordingly

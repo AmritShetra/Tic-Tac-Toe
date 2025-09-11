@@ -1,11 +1,9 @@
 plugins {
-    // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
 
@@ -15,11 +13,6 @@ javafx {
 }
 
 dependencies {
-    // Use JUnit Jupiter for testing.
-    testImplementation libs.junit.jupiter
-
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
     // This dependency is used by the application.
     implementation libs.guava
 }
@@ -34,9 +27,4 @@ java {
 application {
     // Define the main class for the application.
     mainClass = 'tictactoe.App'
-}
-
-tasks.named('test') {
-    // Use JUnit Platform for unit tests.
-    useJUnitPlatform()
 }
